@@ -295,26 +295,30 @@ if __name__ == '__main__':
             ttl = 300  # default Cloudflare TTL
             print(
                 "⚙️ No config detected for 'ttl' - defaulting to 300 seconds (5 minutes)")
-        if ttl < 30:
+        if ttl < 30 and ttl != 1:
             ttl = 30  #
             print("⚙️ TTL is too low - defaulting to 30 seconds")
+        if ttl == 1:
+            delay = 300
+        else:
+            delay = str(ttl)
         if (len(sys.argv) > 1):
             if (sys.argv[1] == "--repeat"):
                 if ipv4_enabled and ipv6_enabled:
                     print(
-                        "🕰️ Updating IPv4 (A) & IPv6 (AAAA) records every " + str(ttl) + " seconds")
+                        "🕰️ Updating IPv4 (A) & IPv6 (AAAA) records every " + str(delay) + " seconds")
                 elif ipv4_enabled and not ipv6_enabled:
                     print("🕰️ Updating IPv4 (A) records every " +
-                          str(ttl) + " seconds")
+                          str(delay) + " seconds")
                 elif ipv6_enabled and not ipv4_enabled:
                     print("🕰️ Updating IPv6 (AAAA) records every " +
-                          str(ttl) + " seconds")
+                          str(delay) + " seconds")
                 next_time = time.time()
                 killer = GracefulExit()
                 prev_ips = None
                 while True:
                     updateIPs(getIPs())
-                    if killer.kill_now.wait(ttl):
+                    if killer.kill_now.wait(delay):
                         break
             else:
                 print("❓ Unrecognized parameter '" +
